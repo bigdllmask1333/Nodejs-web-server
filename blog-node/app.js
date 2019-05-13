@@ -36,10 +36,30 @@ const serverHandle = (req, res) => {
 
   //获取path
   const url = req.url;
-  req.path = url.split("?")[0];
+  req.path = url.split("?")[0]; 
 
   //解析query
   req.query = querystring.parse(url.split("?")[1]);
+
+  //获取cookie
+  req.cookie = {}
+  console.log('cookie:', req.headers.cookie)
+  const cookieStr = req.headers.Cookie || ''
+  console.log(cookieStr.split(";"), 'slite')
+  cookieStr.split(';').forEach(item => {
+    if(!item) {
+      return
+    }
+    const arr = item.split('=')
+    console.log(arr, 'arr')
+    const {key, val} = arr
+    req.cookie[key] = val
+  })
+
+  //操作cookie
+  //res.setHeader('Set-Cookie', `username=good;path=/`)
+
+
 
   //处理post data
   getPostData(req).then(postData => {
@@ -65,10 +85,19 @@ const serverHandle = (req, res) => {
     
 
     //处理user路由
-    const userData = handleUserRouter(req, res);
-    if (userData) {
-      res.end(JSON.stringify(userData));
-      return;
+    // const userData = handleUserRouter(req, res);
+    // if (userData) {
+    //   res.end(JSON.stringify(userData));
+    //   return;
+    // }
+    const userResult = handleUserRouter(req, res);
+    if(userResult) {
+      userResult.then(userData => {
+        res.end(
+          JSON.stringify(userData)
+        )
+      })
+      return
     }
   }).catch(() => {
     

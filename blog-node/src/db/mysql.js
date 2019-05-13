@@ -7,7 +7,7 @@ const con = mysql.createConnection(MYSQL_CONF)
 //开始连接
 con.connect()
 
-//统一执行sql的函数
+//统一执行sql的函数, 查出的结果
 function exec(sql) {
   return new Promise((resolve, reject) => {
     con.query(sql, (err, result) => {
