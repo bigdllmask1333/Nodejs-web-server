@@ -47,31 +47,25 @@ const serverHandle = (req, res) => {
   //获取path
   const url = req.url;
   req.path = url.split("?")[0]; 
-
+  
   //解析query
   req.query = querystring.parse(url.split("?")[1]);
 
   //解析cookie
   req.cookie = {}
-  console.log('cookie:', req.headers.cookie)
   const cookieStr = req.headers.Cookie || ''
-  console.log(cookieStr.split(";"), 'slite')
   cookieStr.split(';').forEach(item => {
     if(!item) {
       return
     }
     const arr = item.split('=')
-    console.log(arr, 'arr')
     const {key, val} = arr
     req.cookie[key] = val
   })
 
-  //操作cookie
-  //res.setHeader('Set-Cookie', `username=good;path=/`)
-
   //解析session
-  const needSetCookie = false
-  const userId = req.cookie.userid
+  let needSetCookie = false
+  let userId = req.cookie.userid
   if(userId) {
     if(!SESSION_DATA[userId]) {
       SESSION_DATA[userId] = {}
@@ -125,9 +119,7 @@ const serverHandle = (req, res) => {
       })
       return
     }
-  }).catch(() => {
     
-
     //未命中路由，返回404
     res.writeHead(404, { "Content-type": "text/plain" });
     res.write("404 NOT FOUND");
