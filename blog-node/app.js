@@ -3,6 +3,8 @@ const querystring = require("querystring");
 const handleBlogRouter = require("./src/router/blog");
 const handleUserRouter = require("./src/router/use");
 
+const { access } = require('./src/untils/log');
+
 // session数据
 const SESSION_DATA = {}
 
@@ -41,6 +43,8 @@ const getCookieExpires = () => {
 }
 
 const serverHandle = (req, res) => {
+  //记录access log
+  access(`${req.method} -- ${req.headers['user-agent']} -- ${Date.now()}`)
   //设置返回格式JSON
   res.setHeader("Content-type", "application/json");
 
